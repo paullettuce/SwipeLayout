@@ -1,9 +1,9 @@
 package pl.paullettuce.swipelayout
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import pl.paullettuce.swipelayout.lib.SwipeLayout
 
 class MainActivity : AppCompatActivity() {

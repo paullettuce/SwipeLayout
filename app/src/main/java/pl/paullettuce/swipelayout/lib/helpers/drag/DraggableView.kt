@@ -1,8 +1,8 @@
-package pl.paullettuce.swipelayout.lib.helpers
+package pl.paullettuce.swipelayout.lib.helpers.drag
 
 import android.view.View
 
-interface DraggableLayout {
+interface DraggableView {
     fun getDraggableView(): View
     fun onMove(touchPointX: Float, currentX: Float)
     fun onPositionReset()

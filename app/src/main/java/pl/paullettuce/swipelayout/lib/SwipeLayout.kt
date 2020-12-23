@@ -8,17 +8,27 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
-import pl.paullettuce.swipelayout.lib.helpers.*
+import pl.paullettuce.swipelayout.lib.helpers.AllowedSwipeDirectionState
+import pl.paullettuce.swipelayout.lib.helpers.SwipeBothSides
+import pl.paullettuce.swipelayout.lib.helpers.background.BackgroundController
+import pl.paullettuce.swipelayout.lib.helpers.background.BackgroundViewsVisibilityController
+import pl.paullettuce.swipelayout.lib.helpers.drag.DragHelper
+import pl.paullettuce.swipelayout.lib.helpers.drag.DraggableView
+import pl.paullettuce.swipelayout.lib.helpers.obtainSwipeAllowanceState
 
 class SwipeLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr),
-    DraggableLayout,
-    BackgroundControllerI,
+    DraggableView,
+    BackgroundViewsVisibilityController,
     View.OnTouchListener {
 
     private val allowedSwipeDirection: AllowedSwipeDirectionState = obtainSwipeAllowanceState(context, attrs)
-    private val dragHelper = DragHelper(this, allowedSwipeDirection)
+    private val dragHelper =
+        DragHelper(
+            this,
+            allowedSwipeDirection
+        )
     private val backgroundController =
         BackgroundController(
             this,
