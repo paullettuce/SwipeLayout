@@ -44,10 +44,7 @@ class DragHelper(
         return false
     }
 
-    fun reset() {
-        draggableLayout.getDraggableView().x = originalX
-        draggableLayout.onPositionReset()
-    }
+    private fun isMoving(event: MotionEvent) = event.x() != actionDownX || event.y() != actionDownY
 
     private fun actionDown(event: MotionEvent) {
         actionDownX = event.x()
@@ -68,23 +65,38 @@ class DragHelper(
     }
 
     private fun actionUp(event: MotionEvent) {
-        checkIfCommittedASwipe(event)
-    }
-
-    private fun checkIfCommittedASwipe(event: MotionEvent) {
-        val travelled = event.x() - actionDownX
-        if (!allowedSwipeDirection.isDragValid(travelled)) return
-
-        val minDistanceToTreatAsSwipe =
-            draggableLayout.getDraggableView().width * swipeConfirmedThreshold
-        if (travelled < -minDistanceToTreatAsSwipe) {
-            draggableLayout.swipedToLeft()
-        } else if (travelled > minDistanceToTreatAsSwipe) {
-            draggableLayout.swipedToRight()
+        if (!checkIfCommittedASwipe(event)) {
+            reset()
         }
     }
 
-    private fun isMoving(event: MotionEvent) = event.x() != actionDownX || event.y() != actionDownY
+    private fun checkIfCommittedASwipe(event: MotionEvent): Boolean {
+        val travelled = event.x() - actionDownX
+        if (!allowedSwipeDirection.isDragValid(travelled)) return false
+
+        val minDistanceToTreatAsSwipe = getMinDistanceToTreatAsSwipe()
+        return when {
+            travelled < -minDistanceToTreatAsSwipe -> {
+                draggableLayout.swipedToLeft()
+                true
+            }
+            travelled > minDistanceToTreatAsSwipe -> {
+                draggableLayout.swipedToRight()
+                true
+            }
+            else -> {
+                false
+            }
+        }
+    }
+
+    private fun getMinDistanceToTreatAsSwipe() =
+        draggableLayout.getDraggableView().width * swipeConfirmedThreshold
+
+    private fun reset() {
+        draggableLayout.getDraggableView().x = originalX
+        draggableLayout.onPositionReset()
+    }
 
     private fun MotionEvent.x() = getX(actionIndex)
     private fun MotionEvent.y() = getY(actionIndex)

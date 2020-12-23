@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
 import pl.paullettuce.swipelayout.lib.helpers.*
@@ -25,6 +24,7 @@ class SwipeLayout @JvmOverloads constructor(
             this,
             initialMoveThreshold = 5f
         )
+    var swipeListener: SwipeListener? = null
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -42,14 +42,12 @@ class SwipeLayout @JvmOverloads constructor(
 
     override fun swipedToLeft() {
         // TODO: 23.12.2020 animation to end goes here
-        Toast.makeText(context, "swiped left", Toast.LENGTH_SHORT).show()
-        dragHelper.reset()
+        swipeListener?.swipedToLeft()
     }
 
     override fun swipedToRight() {
         // TODO: 23.12.2020 animation to end goes here
-        Toast.makeText(context, "swiped right", Toast.LENGTH_SHORT).show()
-        dragHelper.reset()
+        swipeListener?.swipedToRight()
     }
 
     override fun onPositionReset() {
@@ -67,28 +65,28 @@ class SwipeLayout @JvmOverloads constructor(
     }
 
     override fun showLeftSide() {
-        doOnLeftSide { visible() }
+        doOnLeftSideBGView { visible() }
     }
 
     override fun hideLeftSide() {
-        doOnLeftSide { gone() }
+        doOnLeftSideBGView { gone() }
     }
 
     override fun showRightSide() {
-        doOnRightSide { visible() }
+        doOnRightSideBGView { visible() }
     }
 
     override fun hideRightSide() {
-        doOnRightSide { gone() }
+        doOnRightSideBGView { gone() }
     }
 
-    private fun doOnLeftSide(action: View.() -> Unit) {
+    private fun doOnLeftSideBGView(action: View.() -> Unit) {
         val index = getLeftLayoutIndex()
         if (index < 0) return
         getChildAt(index).action()
     }
 
-    private fun doOnRightSide(action: View.() -> Unit) {
+    private fun doOnRightSideBGView(action: View.() -> Unit) {
         val index = getRightLayoutIndex()
         if (index < 0) return
         getChildAt(index).action()
@@ -122,6 +120,11 @@ class SwipeLayout @JvmOverloads constructor(
         if (childCount == 0 || childCount > 3 || childCount == 2 && allowedSwipeDirection is SwipeBothSides) {
             throw LayoutNotBuiltProperlyException()
         }
+    }
+
+    interface SwipeListener {
+        fun swipedToLeft()
+        fun swipedToRight()
     }
 
     inner class LayoutNotBuiltProperlyException : Exception() {

@@ -11,13 +11,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        findViewById<SwipeLayout>(R.id.swipelayout).onCreate()
-
         findViewById<View>(R.id.moving)?.setOnClickListener {
             Toast.makeText(this, "Draggable layout clicked", Toast.LENGTH_SHORT).show()
         }
         findViewById<View>(R.id.sqaure)?.setOnClickListener {
             Toast.makeText(this, "Square inside draggable layout clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<SwipeLayout>(R.id.swipelayout).swipeListener = object : SwipeLayout.SwipeListener {
+            override fun swipedToLeft() {
+                Toast.makeText(this@MainActivity, "swiped left", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun swipedToRight() {
+                Toast.makeText(this@MainActivity, "swiped right", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
