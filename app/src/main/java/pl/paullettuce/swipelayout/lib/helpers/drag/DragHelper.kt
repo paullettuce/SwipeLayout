@@ -4,7 +4,7 @@ import android.view.MotionEvent
 import pl.paullettuce.swipelayout.lib.helpers.AllowedSwipeDirectionState
 
 class DragHelper(
-    private val draggableView: DraggableView,
+    private val mainLayoutInteractor: MainLayoutInteractor,
     private val allowedSwipeDirection: AllowedSwipeDirectionState,
     private val swipeConfirmedThreshold: Float = 0.5f
 ) {
@@ -12,12 +12,14 @@ class DragHelper(
     private var lastTouchX = 0f
     private var actionDownX = 0F
     private var actionDownY = 0F
+    private var touchable: Boolean = true
 
     fun onAttachedToWindow() {
-        originalX = draggableView.getDraggableView().x
+        originalX = mainLayoutInteractor.getDraggableView().x
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!touchable) return true // consume touch event without action
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 actionDown(event)
@@ -45,6 +47,11 @@ class DragHelper(
         return false
     }
 
+    fun onReset() {
+        mainLayoutInteractor.getDraggableView().x = originalX
+        touchable = true
+    }
+
     private fun isMoving(event: MotionEvent) = event.x() != actionDownX || event.y() != actionDownY
 
     private fun actionDown(event: MotionEvent) {
@@ -59,15 +66,15 @@ class DragHelper(
 
         val diff = x - lastTouchX
         if (diff > 1f || diff < 1f) {
-            draggableView.getDraggableView().x += diff
+            mainLayoutInteractor.getDraggableView().x += diff
             lastTouchX = x
-            draggableView.onMove(actionDownX, x)
+            mainLayoutInteractor.onMove(actionDownX, x)
         }
     }
 
     private fun actionUp(event: MotionEvent) {
         if (!checkIfCommittedASwipe(event)) {
-            reset()
+            mainLayoutInteractor.reset()
         }
     }
 
@@ -78,11 +85,13 @@ class DragHelper(
         val minDistanceToTreatAsSwipe = getMinDistanceToTreatAsSwipe()
         return when {
             travelled < -minDistanceToTreatAsSwipe -> {
-                draggableView.swipedToLeft()
+                touchable = false
+                mainLayoutInteractor.swipedToLeft()
                 true
             }
             travelled > minDistanceToTreatAsSwipe -> {
-                draggableView.swipedToRight()
+                touchable = false
+                mainLayoutInteractor.swipedToRight()
                 true
             }
             else -> {
@@ -92,12 +101,7 @@ class DragHelper(
     }
 
     private fun getMinDistanceToTreatAsSwipe() =
-        draggableView.getDraggableView().width * swipeConfirmedThreshold
-
-    private fun reset() {
-        draggableView.getDraggableView().x = originalX
-        draggableView.onPositionReset()
-    }
+        mainLayoutInteractor.getDraggableView().width * swipeConfirmedThreshold
 
     private fun MotionEvent.x() = getX(actionIndex)
     private fun MotionEvent.y() = getY(actionIndex)

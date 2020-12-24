@@ -10,16 +10,17 @@ import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
 import pl.paullettuce.swipelayout.lib.helpers.AllowedSwipeDirectionState
 import pl.paullettuce.swipelayout.lib.helpers.SwipeBothSides
+import pl.paullettuce.swipelayout.lib.helpers.animation.SwipeAnimator
 import pl.paullettuce.swipelayout.lib.helpers.background.BackgroundController
 import pl.paullettuce.swipelayout.lib.helpers.background.BackgroundViewsVisibilityController
 import pl.paullettuce.swipelayout.lib.helpers.drag.DragHelper
-import pl.paullettuce.swipelayout.lib.helpers.drag.DraggableView
+import pl.paullettuce.swipelayout.lib.helpers.drag.MainLayoutInteractor
 import pl.paullettuce.swipelayout.lib.helpers.obtainSwipeAllowanceState
 
 class SwipeLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr),
-    DraggableView,
+    MainLayoutInteractor,
     BackgroundViewsVisibilityController,
     View.OnTouchListener {
 
@@ -32,8 +33,9 @@ class SwipeLayout @JvmOverloads constructor(
     private val backgroundController =
         BackgroundController(
             this,
-            initialMoveThreshold = 5f
+            startingMoveThresholdPx = 5f
         )
+    private val swipeAnimator = SwipeAnimator()
     var swipeListener: SwipeListener? = null
 
     override fun onAttachedToWindow() {
@@ -51,17 +53,18 @@ class SwipeLayout @JvmOverloads constructor(
     }
 
     override fun swipedToLeft() {
-        // TODO: 23.12.2020 animation to end goes here
+        swipeAnimator.animateToLeft(getDraggableView())
         swipeListener?.swipedToLeft()
     }
 
     override fun swipedToRight() {
-        // TODO: 23.12.2020 animation to end goes here
+        swipeAnimator.animateToRight(getDraggableView())
         swipeListener?.swipedToRight()
     }
 
-    override fun onPositionReset() {
-        backgroundController.reset()
+    override fun reset() {
+        backgroundController.onReset()
+        dragHelper.onReset()
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {

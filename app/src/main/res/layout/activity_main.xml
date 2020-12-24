@@ -54,4 +54,15 @@
         </LinearLayout>
     </pl.paullettuce.swipelayout.lib.SwipeLayout>
 
+    <Button
+        android:id="@+id/resetBtn"
+        app:layout_constraintTop_toBottomOf="@id/swipelayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="reset"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

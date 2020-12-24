@@ -2,23 +2,23 @@ package pl.paullettuce.swipelayout.lib.helpers.background
 
 class BackgroundController(
     private val backgroundViews: BackgroundViewsVisibilityController,
-    private val initialMoveThreshold: Float
+    private val startingMoveThresholdPx: Float
 ) {
     fun onMove(touchPointX: Float, currentX: Float) {
         when {
-            currentX > touchPointX + initialMoveThreshold -> {
+            currentX > touchPointX + startingMoveThresholdPx -> {
                 backgroundViews.showLeftSide()
             }
-            currentX < touchPointX - initialMoveThreshold -> {
+            currentX < touchPointX - startingMoveThresholdPx -> {
                 backgroundViews.showRightSide()
             }
             else -> {
-                reset()
+                onReset()
             }
         }
     }
 
-    fun reset() {
+    fun onReset() {
         backgroundViews.hideLeftSide()
         backgroundViews.hideRightSide()
     }

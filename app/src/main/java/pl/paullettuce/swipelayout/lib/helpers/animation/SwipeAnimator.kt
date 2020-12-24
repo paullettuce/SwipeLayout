@@ -1,14 +1,35 @@
 package pl.paullettuce.swipelayout.lib.helpers.animation
 
+import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.View
+import kotlin.math.absoluteValue
 
-class SwipeAnimator {
+/**
+ * @param animationSlowness: the higher value, the slower animation goes
+ */
+class SwipeAnimator(
+    var animationSlowness: Long = 500L
+) {
 
-    fun animateToLeft(view: View, startX: Float) {
-
+    fun animateToLeft(view: View) {
+        ObjectAnimator.ofFloat(view, "translationX", -view.width.toFloat()).apply {
+            duration = calculateDuration(view)
+            start()
+        }
     }
 
-    fun animateToRight(view: View, startX: Float) {
+    fun animateToRight(view: View) {
+        ObjectAnimator.ofFloat(view, "translationX", view.width.toFloat()).apply {
+            duration = calculateDuration(view)
+            start()
+        }
+    }
 
+    private fun calculateDuration(view: View): Long {
+        val positiveX = view.x.absoluteValue
+        val width = view.width
+        val duration = ((width - positiveX) * animationSlowness / width).toLong()
+        return if (duration > 0) duration else 0L
     }
 }

@@ -2,6 +2,7 @@ package pl.paullettuce.swipelayout
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import pl.paullettuce.swipelayout.lib.SwipeLayout
@@ -26,6 +27,10 @@ class MainActivity : AppCompatActivity() {
             override fun swipedToRight() {
                 Toast.makeText(this@MainActivity, "swiped right", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        findViewById<Button>(R.id.resetBtn).setOnClickListener {
+            findViewById<SwipeLayout>(R.id.swipelayout).reset()
         }
     }
 }
