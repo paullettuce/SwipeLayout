@@ -7,10 +7,10 @@ class BackgroundController(
     fun onMove(touchPointX: Float, currentX: Float) {
         when {
             currentX > touchPointX + startingMoveThresholdPx -> {
-                backgroundViews.showLeftSide()
+                backgroundViews.onLeftUnderViewRevealed()
             }
             currentX < touchPointX - startingMoveThresholdPx -> {
-                backgroundViews.showRightSide()
+                backgroundViews.onRightUnderViewRevealed()
             }
             else -> {
                 onReset()
@@ -19,7 +19,7 @@ class BackgroundController(
     }
 
     fun onReset() {
-        backgroundViews.hideLeftSide()
-        backgroundViews.hideRightSide()
+        backgroundViews.hideLeftUnderView()
+        backgroundViews.hideRightUnderView()
     }
 }

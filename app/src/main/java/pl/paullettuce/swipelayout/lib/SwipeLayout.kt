@@ -77,39 +77,39 @@ class SwipeLayout @JvmOverloads constructor(
         return dragHelper.isDragAction(event)
     }
 
-    override fun showLeftSide() {
+    override fun onLeftUnderViewRevealed() {
         doOnLeftSideBGView { visible() }
     }
 
-    override fun hideLeftSide() {
+    override fun hideLeftUnderView() {
         doOnLeftSideBGView { gone() }
     }
 
-    override fun showRightSide() {
+    override fun onRightUnderViewRevealed() {
         doOnRightSideBGView { visible() }
     }
 
-    override fun hideRightSide() {
+    override fun hideRightUnderView() {
         doOnRightSideBGView { gone() }
     }
 
     private fun doOnLeftSideBGView(action: View.() -> Unit) {
-        val index = getLeftLayoutIndex()
+        val index = getLeftUnderlyingLayoutIndex()
         if (index < 0) return
         getChildAt(index).action()
     }
 
     private fun doOnRightSideBGView(action: View.() -> Unit) {
-        val index = getRightLayoutIndex()
+        val index = getRighUnderlyingLayoutIndex()
         if (index < 0) return
         getChildAt(index).action()
     }
 
-    private fun getLeftLayoutIndex(): Int {
+    private fun getLeftUnderlyingLayoutIndex(): Int {
         return allowedSwipeDirection.getLeftLayoutIndex(childCount)
     }
 
-    private fun getRightLayoutIndex(): Int {
+    private fun getRighUnderlyingLayoutIndex(): Int {
         return allowedSwipeDirection.getRightLayoutIndex(childCount)
     }
 
