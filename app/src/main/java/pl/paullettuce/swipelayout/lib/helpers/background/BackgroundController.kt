@@ -1,16 +1,18 @@
 package pl.paullettuce.swipelayout.lib.helpers.background
 
+import pl.paullettuce.swipelayout.lib.SwipeLayout
+
 class BackgroundController(
-    private val backgroundViews: BackgroundViewsVisibilityController,
+    private val mainLayoutController: SwipeLayout,
     private val startingMoveThresholdPx: Float
 ) {
     fun onMove(touchPointX: Float, currentX: Float) {
         when {
             currentX > touchPointX + startingMoveThresholdPx -> {
-                backgroundViews.onLeftUnderViewRevealed()
+                mainLayoutController.showLeftBGView()
             }
             currentX < touchPointX - startingMoveThresholdPx -> {
-                backgroundViews.onRightUnderViewRevealed()
+                mainLayoutController.showRightBGView()
             }
             else -> {
                 onReset()
@@ -19,7 +21,7 @@ class BackgroundController(
     }
 
     fun onReset() {
-        backgroundViews.hideLeftUnderView()
-        backgroundViews.hideRightUnderView()
+        mainLayoutController.hideLeftBGView()
+        mainLayoutController.hideRightBGView()
     }
 }

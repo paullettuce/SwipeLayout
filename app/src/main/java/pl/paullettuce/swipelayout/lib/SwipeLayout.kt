@@ -7,34 +7,21 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.forEachIndexed
-import androidx.core.view.isVisible
-import pl.paullettuce.swipelayout.lib.helpers.AllowedSwipeDirectionState
-import pl.paullettuce.swipelayout.lib.helpers.SwipeBothSides
+import pl.paullettuce.swipelayout.lib.helpers.*
 import pl.paullettuce.swipelayout.lib.helpers.animation.SwipeAnimator
 import pl.paullettuce.swipelayout.lib.helpers.background.BackgroundController
-import pl.paullettuce.swipelayout.lib.helpers.background.BackgroundViewsVisibilityController
 import pl.paullettuce.swipelayout.lib.helpers.drag.DragHelper
-import pl.paullettuce.swipelayout.lib.helpers.drag.MainLayoutInteractor
-import pl.paullettuce.swipelayout.lib.helpers.obtainSwipeAllowanceState
 
 class SwipeLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr),
-    MainLayoutInteractor,
-    BackgroundViewsVisibilityController,
     View.OnTouchListener {
 
     private val allowedSwipeDirection: AllowedSwipeDirectionState = obtainSwipeAllowanceState(context, attrs)
     private val dragHelper =
-        DragHelper(
-            this,
-            allowedSwipeDirection
-        )
+        DragHelper(this, allowedSwipeDirection)
     private val backgroundController =
-        BackgroundController(
-            this,
-            startingMoveThresholdPx = 5f
-        )
+        BackgroundController(this, startingMoveThresholdPx = 5f)
     private val swipeAnimator = SwipeAnimator()
     var swipeListener: SwipeListener? = null
 
@@ -44,27 +31,6 @@ class SwipeLayout @JvmOverloads constructor(
         dragHelper.onAttachedToWindow()
         hideAllButDraggableViews()
         setOnTouchListener(this)
-    }
-
-    override fun getDraggableView(): View = getChildAt(draggableViewIndex())
-
-    override fun onMove(touchPointX: Float, currentX: Float) {
-        backgroundController.onMove(touchPointX, currentX)
-    }
-
-    override fun swipedToLeft() {
-        swipeAnimator.animateToLeft(getDraggableView())
-        swipeListener?.swipedToLeft()
-    }
-
-    override fun swipedToRight() {
-        swipeAnimator.animateToRight(getDraggableView())
-        swipeListener?.swipedToRight()
-    }
-
-    override fun reset() {
-        backgroundController.onReset()
-        dragHelper.onReset()
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -77,20 +43,43 @@ class SwipeLayout @JvmOverloads constructor(
         return dragHelper.isDragAction(event)
     }
 
-    override fun onLeftUnderViewRevealed() {
-        doOnLeftSideBGView { visible() }
+    fun reset() {
+        backgroundController.onReset()
+        dragHelper.onReset()
     }
 
-    override fun hideLeftUnderView() {
-        doOnLeftSideBGView { gone() }
+    fun swipeToLeft() {
+        doOnRightSideBGView { show() }
+        swipeAnimator.animateToLeft(getDraggableView())
+        swipeListener?.swipedToLeft()
     }
 
-    override fun onRightUnderViewRevealed() {
-        doOnRightSideBGView { visible() }
+    fun swipeToRight() {
+        doOnLeftSideBGView { show() }
+        swipeAnimator.animateToRight(getDraggableView())
+        swipeListener?.swipedToRight()
     }
 
-    override fun hideRightUnderView() {
-        doOnRightSideBGView { gone() }
+    internal fun getDraggableView(): View = getChildAt(draggableViewIndex())
+
+    internal fun onMove(touchPointX: Float, currentX: Float) {
+        backgroundController.onMove(touchPointX, currentX)
+    }
+
+    internal fun showLeftBGView() {
+        doOnLeftSideBGView { show() }
+    }
+
+    internal fun hideLeftBGView() {
+        doOnLeftSideBGView { hide() }
+    }
+
+    internal fun showRightBGView() {
+        doOnRightSideBGView { show() }
+    }
+
+    internal fun hideRightBGView() {
+        doOnRightSideBGView { hide() }
     }
 
     private fun doOnLeftSideBGView(action: View.() -> Unit) {
@@ -115,19 +104,11 @@ class SwipeLayout @JvmOverloads constructor(
 
     private fun hideAllButDraggableViews() {
         forEachIndexed { index, view ->
-            if (index != draggableViewIndex()) view.gone()
+            if (index != draggableViewIndex()) view.hide()
         }
     }
 
     private fun draggableViewIndex() = childCount - 1
-
-    private fun View.visible() {
-        if (!isVisible) visibility = View.VISIBLE
-    }
-
-    private fun View.gone() {
-        if (isVisible) visibility = View.GONE
-    }
 
     private fun throwExceptionIfNotBuildProperly() {
         if (childCount == 0 || childCount > 3 || childCount == 2 && allowedSwipeDirection is SwipeBothSides) {

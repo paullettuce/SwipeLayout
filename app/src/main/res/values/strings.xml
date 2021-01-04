@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SwipeLayout</string>
+    <string name="toleft"><![CDATA[<--]]></string>
+    <string name="toright"><![CDATA[-->]]></string>
 </resources>
