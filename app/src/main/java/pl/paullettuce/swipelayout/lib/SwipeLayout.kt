@@ -29,7 +29,7 @@ class SwipeLayout @JvmOverloads constructor(
         super.onAttachedToWindow()
         throwExceptionIfNotBuildProperly()
         dragHelper.onAttachedToWindow()
-        hideAllButDraggableViews()
+        hideAllViewsExceptDraggable()
         setOnTouchListener(this)
     }
 
@@ -89,7 +89,7 @@ class SwipeLayout @JvmOverloads constructor(
     }
 
     private fun doOnRightSideBGView(action: View.() -> Unit) {
-        val index = getRighUnderlyingLayoutIndex()
+        val index = getRightUnderlyingLayoutIndex()
         if (index < 0) return
         getChildAt(index).action()
     }
@@ -98,11 +98,11 @@ class SwipeLayout @JvmOverloads constructor(
         return allowedSwipeDirection.getLeftLayoutIndex(childCount)
     }
 
-    private fun getRighUnderlyingLayoutIndex(): Int {
+    private fun getRightUnderlyingLayoutIndex(): Int {
         return allowedSwipeDirection.getRightLayoutIndex(childCount)
     }
 
-    private fun hideAllButDraggableViews() {
+    private fun hideAllViewsExceptDraggable() {
         forEachIndexed { index, view ->
             if (index != draggableViewIndex()) view.hide()
         }
