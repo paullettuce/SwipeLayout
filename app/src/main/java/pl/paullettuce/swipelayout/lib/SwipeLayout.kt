@@ -112,23 +112,12 @@ class SwipeLayout @JvmOverloads constructor(
 
     private fun throwExceptionIfNotBuildProperly() {
         if (childCount == 0 || childCount > 3 || childCount == 2 && allowedSwipeDirection is SwipeBothSides) {
-            throw LayoutNotBuiltProperlyException()
+            throw LayoutNotBuiltProperlyException(childCount)
         }
     }
 
     interface SwipeListener {
         fun swipedToLeft()
         fun swipedToRight()
-    }
-
-    inner class LayoutNotBuiltProperlyException : Exception() {
-        override val message: String?
-            get() {
-                return if (childCount == 2) {
-                    "You have to specify swipe direction side explicitly. You can do that using swipeEnabled xml attribute"
-                } else {
-                    "This layout must have one, two or three children, current children count=$childCount."
-                }
-            }
     }
 }
