@@ -7,7 +7,7 @@
     android:padding="15dp"
     tools:context=".MainActivity">
 
-    <pl.paullettuce.swipelayout.lib.SwipeLayout
+    <pl.paullettuce.SwipeLayout
         android:id="@+id/swipelayout"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -61,7 +61,7 @@
                 android:text="me too"
                 android:gravity="center" />
         </RelativeLayout>
-    </pl.paullettuce.swipelayout.lib.SwipeLayout>
+    </pl.paullettuce.SwipeLayout>
 
     <Button
         android:id="@+id/swipeLeft"

@@ -1,8 +1,8 @@
-package pl.paullettuce.swipelayout.lib.helpers.drag
+package pl.paullettuce.swipelayout_lib.helpers.drag
 
 import android.view.MotionEvent
-import pl.paullettuce.swipelayout.lib.SwipeLayout
-import pl.paullettuce.swipelayout.lib.helpers.AllowedSwipeDirectionState
+import pl.paullettuce.SwipeLayout
+import pl.paullettuce.swipelayout_lib.helpers.AllowedSwipeDirectionState
 
 class DragHelper(
     private val mainLayoutController: SwipeLayout,

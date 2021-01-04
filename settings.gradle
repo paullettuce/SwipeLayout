@@ -1,2 +1,3 @@
+include ':swipelayout_lib'
 include ':app'
 rootProject.name = "SwipeLayout"

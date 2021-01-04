@@ -1,9 +1,9 @@
-package pl.paullettuce.swipelayout.lib.helpers
+package pl.paullettuce.swipelayout_lib.helpers
 
 import android.content.Context
 import android.util.AttributeSet
-import pl.paullettuce.swipelayout.R
-import pl.paullettuce.swipelayout.lib.SwipeLayout
+import pl.paullettuce.SwipeLayout
+import pl.paullettuce.swipelayout_lib.R
 
 fun SwipeLayout.obtainSwipeAllowanceState(
     context: Context,

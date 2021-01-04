@@ -1,4 +1,4 @@
-package pl.paullettuce.swipelayout.lib.helpers
+package pl.paullettuce.swipelayout_lib.helpers
 
 class LayoutNotBuiltProperlyException(private val childCount: Int) : Exception() {
     override val message: String?

@@ -1,7 +1,6 @@
-package pl.paullettuce.swipelayout.lib.helpers.animation
+package pl.paullettuce.swipelayout_lib.helpers.animation
 
 import android.animation.ObjectAnimator
-import android.util.Log
 import android.view.View
 import kotlin.math.absoluteValue
 

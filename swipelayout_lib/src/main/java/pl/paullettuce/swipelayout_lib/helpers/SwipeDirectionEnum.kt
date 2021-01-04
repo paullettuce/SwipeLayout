@@ -1,4 +1,4 @@
-package pl.paullettuce.swipelayout.lib.helpers
+package pl.paullettuce.swipelayout_lib.helpers
 
 enum class SwipeDirectionEnum(val value: Int) {
     TO_LEFT(0),

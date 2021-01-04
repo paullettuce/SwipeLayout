@@ -1,4 +1,4 @@
-package pl.paullettuce.swipelayout.lib.helpers
+package pl.paullettuce.swipelayout_lib.helpers
 
 import android.view.View
 import androidx.core.view.isVisible

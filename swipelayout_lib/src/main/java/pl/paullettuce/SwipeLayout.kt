@@ -1,4 +1,4 @@
-package pl.paullettuce.swipelayout.lib
+package pl.paullettuce
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,10 +7,10 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.forEachIndexed
-import pl.paullettuce.swipelayout.lib.helpers.*
-import pl.paullettuce.swipelayout.lib.helpers.animation.SwipeAnimator
-import pl.paullettuce.swipelayout.lib.helpers.background.BackgroundController
-import pl.paullettuce.swipelayout.lib.helpers.drag.DragHelper
+import pl.paullettuce.swipelayout_lib.helpers.*
+import pl.paullettuce.swipelayout_lib.helpers.animation.SwipeAnimator
+import pl.paullettuce.swipelayout_lib.helpers.background.BackgroundController
+import pl.paullettuce.swipelayout_lib.helpers.drag.DragHelper
 
 class SwipeLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0

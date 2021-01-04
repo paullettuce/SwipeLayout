@@ -1,6 +1,6 @@
-package pl.paullettuce.swipelayout.lib.helpers.background
+package pl.paullettuce.swipelayout_lib.helpers.background
 
-import pl.paullettuce.swipelayout.lib.SwipeLayout
+import pl.paullettuce.SwipeLayout
 
 class BackgroundController(
     private val mainLayoutController: SwipeLayout,
