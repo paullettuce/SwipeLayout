@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import pl.paullettuce.SwipeLayout
 import pl.paullettuce.swipelayout_lib.R
 
-fun SwipeLayout.obtainSwipeAllowanceState(
+internal fun SwipeLayout.obtainSwipeAllowanceState(
     context: Context,
     attrs: AttributeSet?
 ): AllowedSwipeDirectionState {
@@ -28,7 +28,7 @@ fun SwipeLayout.obtainSwipeAllowanceState(
     }
 }
 
-interface AllowedSwipeDirectionState {
+internal interface AllowedSwipeDirectionState {
     fun getLeftLayoutIndex(childCount: Int): Int
     fun getRightLayoutIndex(childCount: Int): Int
     fun isDragValid(travelledX: Float): Boolean
@@ -37,7 +37,7 @@ interface AllowedSwipeDirectionState {
 /**
  * When only swipe to left <-- is enabled , the right side of layout gets revealed
  */
-class SwipeToLeftOnly :
+internal class SwipeToLeftOnly :
     AllowedSwipeDirectionState {
     override fun getLeftLayoutIndex(childCount: Int) = -1
 
@@ -61,7 +61,7 @@ class SwipeToLeftOnly :
 /**
  * When only swipe to right --> is enabled , the left side of layout gets revealed
  */
-class SwipeToRightOnly :
+internal class SwipeToRightOnly :
     AllowedSwipeDirectionState {
     override fun getLeftLayoutIndex(childCount: Int): Int {
         return when (childCount) {
@@ -84,7 +84,7 @@ class SwipeToRightOnly :
 /**
  * Layout moves horizontally both ways
  */
-class SwipeBothSides :
+internal class SwipeBothSides :
     AllowedSwipeDirectionState {
     override fun getLeftLayoutIndex(childCount: Int): Int {
         return when (childCount) {

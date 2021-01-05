@@ -2,7 +2,7 @@ package pl.paullettuce.swipelayout_lib.helpers.background
 
 import pl.paullettuce.SwipeLayout
 
-class BackgroundController(
+internal class BackgroundController(
     private val mainLayoutController: SwipeLayout,
     private val startingMoveThresholdPx: Float
 ) {

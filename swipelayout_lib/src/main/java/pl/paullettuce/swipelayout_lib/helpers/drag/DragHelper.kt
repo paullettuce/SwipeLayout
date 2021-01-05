@@ -4,7 +4,7 @@ import android.view.MotionEvent
 import pl.paullettuce.SwipeLayout
 import pl.paullettuce.swipelayout_lib.helpers.AllowedSwipeDirectionState
 
-class DragHelper(
+internal class DragHelper(
     private val mainLayoutController: SwipeLayout,
     private val allowedSwipeDirection: AllowedSwipeDirectionState,
     private val swipeConfirmedThreshold: Float = 0.5f

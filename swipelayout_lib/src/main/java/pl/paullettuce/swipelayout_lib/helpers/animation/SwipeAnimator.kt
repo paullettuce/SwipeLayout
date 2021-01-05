@@ -7,7 +7,7 @@ import kotlin.math.absoluteValue
 /**
  * @param animationSlowness: the higher value, the slower animation goes
  */
-class SwipeAnimator(
+internal class SwipeAnimator(
     var animationSlowness: Long = 500L
 ) {
 
