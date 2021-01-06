@@ -68,6 +68,7 @@ class SwipeLayout @JvmOverloads constructor(
 
     internal fun showLeftBGView() {
         doOnLeftSideBGView { show() }
+        doOnRightSideBGView { hide() }
     }
 
     internal fun hideLeftBGView() {
@@ -76,6 +77,7 @@ class SwipeLayout @JvmOverloads constructor(
 
     internal fun showRightBGView() {
         doOnRightSideBGView { show() }
+        doOnLeftSideBGView { hide() }
     }
 
     internal fun hideRightBGView() {
