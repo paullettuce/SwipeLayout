@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import pl.paullettuce.SwipeLayout
 import pl.paullettuce.swipelayout_lib.R
+import kotlin.math.absoluteValue
 
 internal fun SwipeLayout.obtainSwipeAllowanceState(
     context: Context,
@@ -104,6 +105,6 @@ internal class SwipeBothSides :
      * Allows movement if it's significant
      */
     override fun isDragValid(travelledX: Float): Boolean {
-        return travelledX > 1f || travelledX < 1f
+        return travelledX.absoluteValue > 1f
     }
 }
