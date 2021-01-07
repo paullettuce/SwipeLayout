@@ -2,7 +2,10 @@ package pl.paullettuce.swipelayout_lib.helpers.drag
 
 import android.view.MotionEvent
 import pl.paullettuce.SwipeLayout
+import pl.paullettuce.swipelayout_lib.helpers.*
 import pl.paullettuce.swipelayout_lib.helpers.AllowedSwipeDirectionState
+import pl.paullettuce.swipelayout_lib.helpers.xDiffTo
+import pl.paullettuce.swipelayout_lib.helpers.yDiffTo
 import kotlin.math.absoluteValue
 
 internal class DragHelper(
@@ -10,19 +13,16 @@ internal class DragHelper(
     private val allowedSwipeDirection: AllowedSwipeDirectionState,
     private val swipeConfirmedThreshold: Float = 0.5f
 ) {
-    private var originalX: Float = 0f
-    private var lastTouchX = 0f
-    private var actionDownX = 0F
-    private var actionDownY = 0F
-    private var blockTouchesUntilReset: Boolean = false
-    private var isCurrentlyDraggedHorizontally = false
+
+    private val coords = CoordsStore()
+    private var viewState: ViewState = Still()
 
     fun onAttachedToWindow() {
-        originalX = mainLayoutController.getDraggableView().x
+        coords.onAttachedToWindow(mainLayoutController.getDraggableView())
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
-        if (blockTouchesUntilReset) return true // consume touch event without action
+        if (!viewState.shouldHandleTouchItself()) return false // notify parent view that touch wasn't consumed nor handled, so parent view can handle it itself
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 actionDown(event)
@@ -51,83 +51,120 @@ internal class DragHelper(
     }
 
     fun onReset() {
-        mainLayoutController.getDraggableView().x = originalX
-        blockTouchesUntilReset = false
-        isCurrentlyDraggedHorizontally = false
+        coords.bringToOriginalPosition(mainLayoutController.getDraggableView())
+        viewState = Still()
     }
 
-    private fun isMoving(event: MotionEvent) = event.x() != actionDownX || event.y() != actionDownY
+    fun swipedAway() {
+        viewState = SwipedAway()
+    }
+
+    private fun isMoving(event: MotionEvent) = coords.isMoving(event)
 
     private fun actionDown(event: MotionEvent) {
-        actionDownX = event.x()
-        actionDownY = event.y()
-        lastTouchX = actionDownX
+        coords.actionDown(event)
     }
 
     private fun actionMove(event: MotionEvent) {
-        if (blockTouchesIfMoveIsVertical(event)) return
-        if (!allowedSwipeDirection.isDragValid(event.xDiffTo(actionDownX))) return
-
-        moveView(event)
+        viewState.actionMove(event)
     }
 
     private fun actionUp(event: MotionEvent) {
-        if (!checkIfCommittedASwipe(event)) { // if drag is not a swipe
-            mainLayoutController.reset()
-        }
-    }
-
-    private fun blockTouchesIfMoveIsVertical(event: MotionEvent): Boolean {
-        val diffX = event.xDiffTo(actionDownX).absoluteValue
-        val diffY = event.yDiffTo(actionDownY).absoluteValue
-        if (diffY > diffX && !isCurrentlyDraggedHorizontally) {
-            blockTouchesUntilReset = true
-        }
-        return blockTouchesUntilReset
+        viewState.actionUp(event)
     }
 
     /**
      * Move draggable view by ~1px step
+     * @return true if view has moved, false if not
      */
-    private fun moveView(event: MotionEvent) {
-        val xDiff = event.xDiffTo(lastTouchX)
-        val currentX = event.x()
-        if (xDiff.absoluteValue > 1f) {
-            isCurrentlyDraggedHorizontally = true
-            mainLayoutController.getDraggableView().x += xDiff
-            lastTouchX = currentX
-            mainLayoutController.onMove(actionDownX, currentX)
+    private fun moveView(event: MotionEvent): Boolean {
+        val travelledX = event.xDiffTo(coords.actionDownX)
+        if (!allowedSwipeDirection.isDragValid(travelledX)) return false
+
+        if (coords.moveView(mainLayoutController.getDraggableView(), event)) {
+            mainLayoutController.onMove(travelledX)
+            return true
         }
+        return false
     }
 
-    private fun checkIfCommittedASwipe(event: MotionEvent): Boolean {
-        val travelled = event.xDiffTo(actionDownX)
-        if (!allowedSwipeDirection.isDragValid(travelled)) return false
-
-        val minDistanceToTreatAsSwipe = getMinDistanceToTreatAsSwipe()
-        return when {
-            travelled < -minDistanceToTreatAsSwipe -> {
-                blockTouchesUntilReset = true
-                mainLayoutController.swipeToLeft()
-                true
-            }
-            travelled > minDistanceToTreatAsSwipe -> {
-                blockTouchesUntilReset = true
-                mainLayoutController.swipeToRight()
-                true
-            }
-            else -> {
-                false
-            }
-        }
+    abstract class ViewState {
+        abstract fun shouldHandleTouchItself(): Boolean
+        abstract fun actionUp(event: MotionEvent)
+        abstract fun actionMove(event: MotionEvent)
     }
 
-    private fun getMinDistanceToTreatAsSwipe() =
-        mainLayoutController.getDraggableView().width * swipeConfirmedThreshold
+    inner class ScrollingVertically : ViewState() {
+        override fun actionUp(event: MotionEvent) {
+            mainLayoutController.reset()
+        }
 
-    private fun MotionEvent.xDiffTo(startX: Float) = x() - startX
-    private fun MotionEvent.yDiffTo(startY: Float) = y() - startY
+        override fun actionMove(event: MotionEvent) {}
 
-    private fun MotionEvent.x() = getX(actionIndex)
-    private fun MotionEvent.y() = getY(actionIndex)
+        override fun shouldHandleTouchItself() = false
+    }
+
+    inner class DraggingHorizontally : ViewState() {
+        override fun actionUp(event: MotionEvent) {
+            if (checkIfCommittedASwipe(event)) { // if drag is a swipe
+                viewState = SwipedAway()
+            } else {
+                mainLayoutController.reset()
+            }
+        }
+
+        override fun actionMove(event: MotionEvent) {
+            moveView(event)
+        }
+
+        override fun shouldHandleTouchItself() = true
+
+        private fun checkIfCommittedASwipe(event: MotionEvent): Boolean {
+            val travelled = event.xDiffTo(coords.actionDownX)
+            if (!allowedSwipeDirection.isDragValid(travelled)) return false
+
+            val minDistanceToTreatAsSwipe = getMinDistanceToTreatAsSwipe()
+            return when {
+                travelled < -minDistanceToTreatAsSwipe -> {
+                    mainLayoutController.swipeToLeft()
+                    true
+                }
+                travelled > minDistanceToTreatAsSwipe -> {
+                    mainLayoutController.swipeToRight()
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
+
+        private fun getMinDistanceToTreatAsSwipe() =
+            mainLayoutController.getDraggableView().width * swipeConfirmedThreshold
+    }
+
+    inner class SwipedAway : ViewState() {
+        override fun actionUp(event: MotionEvent) {}
+        override fun actionMove(event: MotionEvent) {}
+        override fun shouldHandleTouchItself() = false
+    }
+
+    inner class Still : ViewState() {
+        override fun actionUp(event: MotionEvent) {}
+        override fun actionMove(event: MotionEvent) {
+            if (isScrollingVertically(event)) {
+                viewState = ScrollingVertically()
+            } else if (moveView(event)) {
+                viewState = DraggingHorizontally()
+            }
+        }
+
+        override fun shouldHandleTouchItself() = true
+
+        private fun isScrollingVertically(event: MotionEvent): Boolean {
+            val diffX = event.xDiffTo(coords.actionDownX).absoluteValue
+            val diffY = event.yDiffTo(coords.actionDownY).absoluteValue
+            return diffY > diffX
+        }
+    }
 }

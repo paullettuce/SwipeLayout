@@ -6,12 +6,12 @@ internal class BackgroundController(
     private val mainLayoutController: SwipeLayout,
     private val startingMoveThresholdPx: Float
 ) {
-    fun onMove(touchPointX: Float, currentX: Float) {
+    fun onMove(travelledX: Float) {
         when {
-            currentX > touchPointX + startingMoveThresholdPx -> {
+            travelledX > startingMoveThresholdPx -> {
                 mainLayoutController.showLeftBGView()
             }
-            currentX < touchPointX - startingMoveThresholdPx -> {
+            travelledX < -startingMoveThresholdPx -> {
                 mainLayoutController.showRightBGView()
             }
             else -> {

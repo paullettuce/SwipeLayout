@@ -49,12 +49,14 @@ class SwipeLayout @JvmOverloads constructor(
     }
 
     fun swipeToLeft() {
+        dragHelper.swipedAway()
         doOnRightSideBGView { show() }
         swipeAnimator.animateToLeft(getDraggableView())
         swipeListener?.swipedToLeft()
     }
 
     fun swipeToRight() {
+        dragHelper.swipedAway()
         doOnLeftSideBGView { show() }
         swipeAnimator.animateToRight(getDraggableView())
         swipeListener?.swipedToRight()
@@ -62,13 +64,13 @@ class SwipeLayout @JvmOverloads constructor(
 
     internal fun getDraggableView(): View = getChildAt(draggableViewIndex())
 
-    internal fun onMove(touchPointX: Float, currentX: Float) {
-        backgroundController.onMove(touchPointX, currentX)
+    internal fun onMove(travelledX: Float) {
+        backgroundController.onMove(travelledX)
     }
 
     internal fun showLeftBGView() {
         doOnLeftSideBGView { show() }
-        doOnRightSideBGView { hide() }
+        hideRightBGView()
     }
 
     internal fun hideLeftBGView() {
@@ -77,7 +79,7 @@ class SwipeLayout @JvmOverloads constructor(
 
     internal fun showRightBGView() {
         doOnRightSideBGView { show() }
-        doOnLeftSideBGView { hide() }
+        hideLeftBGView()
     }
 
     internal fun hideRightBGView() {
