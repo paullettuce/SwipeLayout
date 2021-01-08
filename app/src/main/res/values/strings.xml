@@ -2,4 +2,10 @@
     <string name="app_name">SwipeLayout</string>
     <string name="toleft"><![CDATA[<--]]></string>
     <string name="toright"><![CDATA[-->]]></string>
+    <string name="title_activity_list_test">ListTest</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>

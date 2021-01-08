@@ -2,8 +2,8 @@ package pl.paullettuce.swipelayout_lib.helpers.drag
 
 import android.view.MotionEvent
 import pl.paullettuce.SwipeLayout
-import pl.paullettuce.swipelayout_lib.helpers.*
 import pl.paullettuce.swipelayout_lib.helpers.AllowedSwipeDirectionState
+import pl.paullettuce.swipelayout_lib.helpers.CoordsStore
 import pl.paullettuce.swipelayout_lib.helpers.xDiffTo
 import pl.paullettuce.swipelayout_lib.helpers.yDiffTo
 import kotlin.math.absoluteValue
@@ -13,7 +13,6 @@ internal class DragHelper(
     private val allowedSwipeDirection: AllowedSwipeDirectionState,
     private val swipeConfirmedThreshold: Float = 0.5f
 ) {
-
     private val coords = CoordsStore()
     private var viewState: ViewState = Still()
 
@@ -22,13 +21,15 @@ internal class DragHelper(
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
-        if (!viewState.shouldHandleTouchItself()) return false // notify parent view that touch wasn't consumed nor handled, so parent view can handle it itself
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 actionDown(event)
             }
             MotionEvent.ACTION_MOVE -> {
                 actionMove(event)
+                if (viewState.shouldPreventParentFromInterceptingTouches) {
+                    mainLayoutController.preventParentFromInterceptingTouches()
+                }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 actionUp(event)
@@ -37,8 +38,7 @@ internal class DragHelper(
         return true
     }
 
-    fun isDragAction(event: MotionEvent?): Boolean {
-        event ?: return false
+    fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 actionDown(event)
@@ -89,7 +89,7 @@ internal class DragHelper(
     }
 
     abstract class ViewState {
-        abstract fun shouldHandleTouchItself(): Boolean
+        open val shouldPreventParentFromInterceptingTouches: Boolean = false
         abstract fun actionUp(event: MotionEvent)
         abstract fun actionMove(event: MotionEvent)
     }
@@ -100,11 +100,11 @@ internal class DragHelper(
         }
 
         override fun actionMove(event: MotionEvent) {}
-
-        override fun shouldHandleTouchItself() = false
     }
 
     inner class DraggingHorizontally : ViewState() {
+        override val shouldPreventParentFromInterceptingTouches = true
+
         override fun actionUp(event: MotionEvent) {
             if (checkIfCommittedASwipe(event)) { // if drag is a swipe
                 viewState = SwipedAway()
@@ -116,8 +116,6 @@ internal class DragHelper(
         override fun actionMove(event: MotionEvent) {
             moveView(event)
         }
-
-        override fun shouldHandleTouchItself() = true
 
         private fun checkIfCommittedASwipe(event: MotionEvent): Boolean {
             val travelled = event.xDiffTo(coords.actionDownX)
@@ -146,7 +144,6 @@ internal class DragHelper(
     inner class SwipedAway : ViewState() {
         override fun actionUp(event: MotionEvent) {}
         override fun actionMove(event: MotionEvent) {}
-        override fun shouldHandleTouchItself() = false
     }
 
     inner class Still : ViewState() {
@@ -158,8 +155,6 @@ internal class DragHelper(
                 viewState = DraggingHorizontally()
             }
         }
-
-        override fun shouldHandleTouchItself() = true
 
         private fun isScrollingVertically(event: MotionEvent): Boolean {
             val diffX = event.xDiffTo(coords.actionDownX).absoluteValue

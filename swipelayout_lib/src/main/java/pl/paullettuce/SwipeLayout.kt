@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.core.view.forEachIndexed
 import pl.paullettuce.swipelayout_lib.helpers.*
 import pl.paullettuce.swipelayout_lib.helpers.animation.SwipeAnimator
@@ -34,13 +35,15 @@ class SwipeLayout @JvmOverloads constructor(
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-        Log.d("SwipeLayout", "onTouch: ${v}, event=$event")
+        Log.d("SwipeLayout", "onTouch event=$event")
         event ?: return false
         return dragHelper.onTouchEvent(event)
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent?): Boolean {
-        return dragHelper.isDragAction(event)
+        Log.d("SwipeLayout", "onInterceptTouchEvent event=$event")
+        event ?: return false
+        return dragHelper.onInterceptTouchEvent(event)
     }
 
     fun reset() {
@@ -66,6 +69,10 @@ class SwipeLayout @JvmOverloads constructor(
 
     internal fun onMove(travelledX: Float) {
         backgroundController.onMove(travelledX)
+    }
+
+    internal fun preventParentFromInterceptingTouches() {
+        parent.requestDisallowInterceptTouchEvent(true)
     }
 
     internal fun showLeftBGView() {

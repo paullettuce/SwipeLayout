@@ -1,5 +1,6 @@
 package pl.paullettuce.swipelayout
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,9 +15,12 @@ class MainActivity : AppCompatActivity() {
         moving.setOnClickListener {
             Toast.makeText(this, "Draggable layout clicked", Toast.LENGTH_SHORT).show()
         }
+        moving.setOnLongClickListener {
+            Toast.makeText(this, "LONG click on draggable layout", Toast.LENGTH_SHORT).show()
+            true
+        }
         sqaure.setOnClickListener {
-            Toast.makeText(this, "Square inside draggable layout clicked", Toast.LENGTH_SHORT)
-                .show()
+            startActivity(Intent(this, ListTestActivity::class.java))
         }
 
         swipelayout.swipeListener =
