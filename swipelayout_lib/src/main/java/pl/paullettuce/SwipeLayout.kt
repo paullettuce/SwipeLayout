@@ -17,7 +17,6 @@ class SwipeLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr),
     View.OnTouchListener {
-
     private val allowedSwipeDirection: AllowedSwipeDirectionState = obtainSwipeAllowanceState(context, attrs)
     private val dragHelper =
         DragHelper(this, allowedSwipeDirection)
