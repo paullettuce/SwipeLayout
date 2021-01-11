@@ -23,6 +23,7 @@ class SwipeLayout @JvmOverloads constructor(
     private val backgroundController =
         BackgroundController(this, startingMoveThresholdPx = 5f)
     private val swipeAnimator = SwipeAnimator()
+
     var swipeListener: SwipeListener? = null
 
     override fun onAttachedToWindow() {
