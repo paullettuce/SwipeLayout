@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.core.view.forEachIndexed
 import pl.paullettuce.swipelayout_lib.helpers.*
 import pl.paullettuce.swipelayout_lib.helpers.animation.SwipeAnimator
@@ -44,6 +43,10 @@ class SwipeLayout @JvmOverloads constructor(
         Log.d("SwipeLayout", "onInterceptTouchEvent event=$event")
         event ?: return false
         return dragHelper.onInterceptTouchEvent(event)
+    }
+
+    fun blockSwipes(block: Boolean) {
+        dragHelper.setBlockSwipes(block)
     }
 
     fun reset() {

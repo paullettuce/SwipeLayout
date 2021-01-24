@@ -50,6 +50,14 @@ internal class DragHelper(
         return false
     }
 
+    fun setBlockSwipes(block: Boolean) {
+        viewState = if (block) {
+            Blocked()
+        } else {
+            Still()
+        }
+    }
+
     fun onReset() {
         coords.bringToOriginalPosition(mainLayoutController.getDraggableView())
         viewState = Still()
@@ -161,5 +169,10 @@ internal class DragHelper(
             val diffY = event.yDiffTo(coords.actionDownY).absoluteValue
             return diffY > diffX
         }
+    }
+
+    inner class Blocked : ViewState() {
+        override fun actionUp(event: MotionEvent) { }
+        override fun actionMove(event: MotionEvent) { }
     }
 }

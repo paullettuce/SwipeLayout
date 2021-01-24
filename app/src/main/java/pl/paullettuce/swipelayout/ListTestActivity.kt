@@ -9,8 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_list_test.*
+import kotlinx.android.synthetic.main.list_item.view.*
 
-class ListTestActivity : AppCompatActivity() {
+ class ListTestActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,15 +26,7 @@ class ListTestActivity : AppCompatActivity() {
     }
 }
 
-class LLM(context: Context): LinearLayoutManager(context) {
-//    override fun canScrollHorizontally(): Boolean {
-//        return false
-//    }
-//
-//    override fun canScrollVertically(): Boolean {
-//        return false
-//    }
-}
+class LLM(context: Context): LinearLayoutManager(context) {}
 
 class SwipeViewsAdapter(
     val items: List<Any>
@@ -52,6 +45,8 @@ class SwipeViewsAdapter(
     }
 
     inner class SwipeViewViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind() {}
+        fun bind() {
+            itemView.swipelayout.blockSwipes(adapterPosition % 2 == 0)
+        }
     }
 }
